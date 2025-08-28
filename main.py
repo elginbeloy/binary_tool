@@ -45,9 +45,17 @@ def to_ascii(byte):
 
 
 def update_file(original_file_path, byte_changes):
-  # TODO: implement this
-  pass
-
+    new_file_path = input("File save path " + colored("$ ", "green"))
+    with open(original_file_path, "rb") as original_file, open(new_file_path, "wb") as new_file:
+        offset = 0
+        data = original_file.read()
+        for i, byte in enumerate(data):
+            if f"{i:08x}" in byte_changes:
+                new_byte = byte_changes[f"{i:08x}"]
+                new_file.write(bytes([new_byte]))
+            else:
+                new_file.write(bytes([byte]))
+    print(colored(f"Saved to {new_file_path}!", "green"))
 
 def hexdump(file_path, width=16):
     byte_changes = {}
@@ -82,9 +90,9 @@ def hexdump(file_path, width=16):
                     offset = int(input("seek to byte (offset hex): "), 16)
                     f.seek(offset)
                 elif command_key == "e":
-                    to_edit_offset = input("byte to edit (offset hex): ")
-                    byte_changes[to_edit_offset] = input("new value: ")
-                    if input("save updates? [y/N]") == "y":
+                    to_edit_offset = input("byte to edit (hex offset): ")
+                    byte_changes[to_edit_offset] = int(input("new value (hex): "), 16)
+                    if input("save updates? [y/N] ") == "y":
                         update_file(file_path, byte_changes)
             else:
               offset += len(chunk)
