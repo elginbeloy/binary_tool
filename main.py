@@ -31,11 +31,14 @@ def colored(text, color=None, attrs=None):
         return f"\033[{codes}m{text}\033[0m"
     return text
 
+
 def to_hex(byte):
     return f"{byte:02x}"
 
+
 def to_ascii(byte):
     return colored(chr(byte), "blue") if 32 <= byte <= 126 else '.'
+
 
 def hexdump(file_path, width=16):
     with open(file_path, "rb") as f:
@@ -53,12 +56,24 @@ def hexdump(file_path, width=16):
             line += colored(hex_values, "green") + padding
             line += f"  |{ascii_values}|"
             print(line, end=" ")
-            command_key = input("$ ")
+            command_key = input(" ")
             if len(command_key) == 1:
-              offset = int(input("seek "))
-
-            offset += len(chunk)
+                if command_key == "q":
+                    exit()
+                elif command_key == "d":
+                    continue # TODO: implement page down and up
+                elif command_key == "u":
+                    continue # TODO: implement page down and up
+                elif command_key == "s":
+                    new_offset = int(input("seek "))
+                    f.read(new_offset - offset)
+                    offset = new_offset
+                elif command_key == "e":
+                    exit() # TODO: implement editing to a new file
+            else:
+              offset += len(chunk)
 
 if __name__ == "__main__":
     file_path = input("file path " + colored("$ ", "green"))
+    print(colored("d = page down, u = page up, s = seek, e = edit, q = quit", "blue", attrs=["bold"]))
     hexdump(file_path)
